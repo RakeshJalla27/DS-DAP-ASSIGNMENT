@@ -1,0 +1,35 @@
+/*Data setp to create a data set with the population and 
+violent crime details for the year 2014
+NOT INCLUDING THE STATE UTAH AS MORE THAN 50% OF DATA IS UNAVAILABLE
+*/
+DATA WORK.VIOLENT_CRIME_2014;
+	SET WORK.CRIME_DATA;
+	WHERE YEAR=2014 AND STATE NOT IN ('UTAH','HAWAII');
+	KEEP STATE POPULATION VIOLENT_CRIME;
+	RENAME POPULATION=POPULATION_2014 VIOLENT_CRIME=VIOLENT_CRIME_2014;
+RUN;
+
+/*proc report step to sum the population and crime data
+grouped by state*/
+PROC REPORT DATA=VIOLENT_CRIME_2014 NOWD OUT=WORK.VC_2014;
+	COLUMN STATE POPULATION_2014 VIOLENT_CRIME_2014;
+	DEFINE STATE / GROUP STYLE(COLUMN)=HEADER;
+	DEFINE POPULATION_2014 / SUM 'Population';
+	DEFINE VIOLENT_CRIME_2014 / SUM 'Violent Crime';
+	TITLE1 'Population and Violent Crime grouped by state, year 2014';
+RUN;
+
+/*Add new column for crime rate
+crime rate = no of crimes / population
+multiply by 100000 for no of crimes per 100000*/
+DATA WORK.VC_RATE_2014;
+	SET WORK.VC_2014;
+	CRIME_RATE_2014=(VIOLENT_CRIME_2014/POPULATION_2014)*100000;
+	DROP _BREAK_ POPULATION_2014 VIOLENT_CRIME_2014;
+RUN;
+
+PROC PRINT DATA=WORK.VC_RATE_2014 label;
+	LABEL CRIME_RATE_2014 = 'Crime Rate';
+TITLE1 'Crime rate per 100,000 for the year 2014';
+RUN;
+

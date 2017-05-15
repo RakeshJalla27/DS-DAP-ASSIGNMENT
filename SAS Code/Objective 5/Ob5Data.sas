@@ -1,0 +1,64 @@
+/*data set to select the records from
+the states CA, FL and TX and add new variable
+property crime rate for the year 2014*/
+DATA WORK.PC_RATE_CITY_2014;
+	SET WORK.CRIME_DATA;
+	WHERE YEAR=2014 AND 
+	STATE_CODE IN('CA','FL','TX') AND
+	CITY NE 'TYLER';/*Tyler not considered for 
+	analysis die to unavailability of data*/
+	PROPERTY_CRIME_RATE=(PROPERTY_CRIME/POPULATION)*100000;
+RUN;
+	
+/*sort the data set by descending order of the calculated crime rate*/	
+PROC SORT DATA=WORK.PC_RATE_CITY_2014 OUT=WORK.PC_RATE_SORTED_2014;
+	BY DESCENDING PROPERTY_CRIME_RATE;
+RUN;
+
+/*print the report */	
+PROC PRINT DATA=WORK.PC_RATE_SORTED_2014 SPLIT='*';
+	FORMAT POPULATION PROPERTY_CRIME LARCENY_THEFT
+			BURGLARY MOTOR_VEHICLE_THEFT COMMA16.
+			PROPERTY_CRIME_RATE COMMA16.3;
+	VAR STATE CITY POPULATION PROPERTY_CRIME LARCENY_THEFT 
+		BURGLARY MOTOR_VEHICLE_THEFT PROPERTY_CRIME_RATE;
+	LABEL PROPERTY_CRIME='Property*Crime' LARCENY_THEFT='Larceny*Theft'
+		MOTOR_VEHICLE_THEFT='Motor*Vehicle*Theft'
+		PROPERTY_CRIME_RATE='Property*Crime*Rate';
+TITLE1 'US: Californai, Florida, Texas';
+TITLE2 'Property Crime Details';
+TITLE3 'Year 2014';
+FOOTNOTE '*Crime rate per 100,000';
+RUN;
+
+/*data set for the year 2015*/
+DATA WORK.PC_RATE_CITY_2015;
+	SET WORK.CRIME_DATA;
+	WHERE YEAR=2015 AND 
+	STATE_CODE IN('CA','FL','TX') AND
+	CITY NE 'TYLER';/*Tyler no considered for 
+	analysis die to unavailability of data*/
+	PROPERTY_CRIME_RATE=(PROPERTY_CRIME/POPULATION)*100000;
+RUN;
+	
+/*sort the data set by descending order of the calculated crime rate*/	
+PROC SORT DATA=WORK.PC_RATE_CITY_2015 OUT=WORK.PC_RATE_SORTED_2015;
+	BY DESCENDING PROPERTY_CRIME_RATE;
+RUN;
+
+/*print the report */	
+PROC PRINT DATA=WORK.PC_RATE_SORTED_2015 SPLIT='*';
+	FORMAT POPULATION PROPERTY_CRIME LARCENY_THEFT
+			BURGLARY MOTOR_VEHICLE_THEFT COMMA16.
+			PROPERTY_CRIME_RATE COMMA16.3;
+	VAR STATE CITY POPULATION PROPERTY_CRIME LARCENY_THEFT 
+		BURGLARY MOTOR_VEHICLE_THEFT PROPERTY_CRIME_RATE;
+	LABEL PROPERTY_CRIME='Property*Crime' LARCENY_THEFT='Larceny*Theft'
+		MOTOR_VEHICLE_THEFT='motor*Vehicle*Theft'
+		PROPERTY_CRIME_RATE='Property*Crime*Rate';;
+TITLE1 'US: Californai, Florida, Texas';
+TITLE2 'Property Crime Details';
+TITLE3 'Year 2015';
+FOOTNOTE '*Crime rate per 100,000';
+RUN;
+RUN;

@@ -1,0 +1,84 @@
+/*data set for plotting charts*/
+DATA WORK.CRIME_RATE_DETAILS_SEL_STATE;
+	SET WORK.CRIME_DETAILS_SEL_STATES;
+	VIOLENT_CRIME_RATE=(VIOLENT_CRIME/POPULATION)*100000;
+	PROPERTY_CRIME_RATE=(PROPERTY_CRIME/POPULATION)*100000;
+RUN;
+
+
+/*bar plot for property crime rate*/
+PROC SGPLOT DATA = CRIME_RATE_DETAILS_SEL_STATE;
+	VBAR STATE / RESPONSE = PROPERTY_CRIME_RATE GROUP = YEAR GROUPDISPLAY=CLUSTER DATASKIN=MATTE;
+	YAXIS LABEL = 'Crime Rate per 100,000';
+ 	TITLE 'Property Crime rate by state for the year 2014 and 2015';
+RUN;
+QUIT;
+
+/*transpose proc to get details of crimes
+that categorize under property crimes*/
+PROC TRANSPOSE DATA=WORK.PROPERTY_CRIME_DATA_2014 
+	OUT=WORK.PC_2014_DETAILS
+	NAME=PROPERTY_CRIMES;
+	ID STATE;
+RUN;
+
+PROC TRANSPOSE DATA=WORK.PROPERTY_CRIME_DATA_2015
+	OUT=WORK.PC_2015_DETAILS
+	NAME=PROPERTY_CRIMES;
+	ID STATE;
+RUN;
+
+PROC PRINT DATA=WORK.PC_2014_DETAILS LABEL;
+	FORMAT CALIFORNIA FLORIDA TEXAS COMMA16.;
+	LABEL PROPERTY_CRIMES='PROPERTY CRIME';
+	TITLE 'Details of property crimes by state. Year 2014';
+RUN;
+
+PROC PRINT DATA=WORK.PC_2015_DETAILS LABEL;
+	FORMAT CALIFORNIA FLORIDA TEXAS COMMA16.;
+	LABEL PROPERTY_CRIMES='PROPERTY CRIME';
+	TITLE 'Details of property crimes by state. Year 2015';
+RUN;
+
+
+/*Property crime pie chart california state 2014*/
+PROC GCHART DATA=WORK.PC_2014_DETAILS;
+	PIE3D PROPERTY_CRIMES / TYPE = SUM SUMVAR = CALIFORNIA NOHEADING;
+	TITLE 'Details of property crimes in California for the year 2014';
+RUN;
+QUIT;
+
+/*property crime pie chart california state 2015*/
+PROC GCHART DATA=WORK.PC_2015_DETAILS;
+	PIE3D PROPERTY_CRIMES / TYPE = SUM SUMVAR = CALIFORNIA NOHEADING  ;
+	TITLE 'Details of property crimes in California for the year 2015';
+RUN;
+QUIT;
+
+/*property crime pie chart florida state 2014*/
+PROC GCHART DATA=WORK.PC_2014_DETAILS;
+	PIE3D PROPERTY_CRIMES / TYPE = SUM SUMVAR = FLORIDA NOHEADING;
+	TITLE 'Details of property crimes in Florida for the year 2014';
+RUN;
+QUIT;
+
+/*property crime pie chart FLORIDA state 2015*/
+PROC GCHART DATA=WORK.PC_2015_DETAILS;
+	PIE3D PROPERTY_CRIMES / TYPE = SUM SUMVAR = FLORIDA NOHEADING;
+	TITLE 'Details of property crimes in Florida for the year 2015';
+RUN;
+QUIT;
+
+/*property crime pie chart Texas state 2014*/
+PROC GCHART DATA=WORK.PC_2014_DETAILS;
+	PIE3D PROPERTY_CRIMES / TYPE = SUM SUMVAR = TEXAS NOHEADING;
+	TITLE 'Details of property crimes in Texas for the year 2014';
+RUN;
+QUIT;
+
+/*property crime pie chart Texas state 2015*/
+PROC GCHART DATA=WORK.PC_2015_DETAILS;
+	PIE3D PROPERTY_CRIMES / TYPE = SUM SUMVAR = TEXAS NOHEADING;
+	TITLE 'Details of property crimes in Texas for the year 2015';
+RUN;
+QUIT;

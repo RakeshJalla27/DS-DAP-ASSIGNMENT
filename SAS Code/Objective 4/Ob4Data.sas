@@ -1,0 +1,61 @@
+/*data set to select the records from
+the states CA, FL and TX and add new variable
+violent crime rate for the year 2014*/
+DATA WORK.VC_RATE_CITY_2014;
+	SET WORK.CRIME_DATA;
+	WHERE YEAR=2014 AND 
+	STATE_CODE IN('CA','FL','TX') AND
+	CITY NE 'TYLER';/*Tyler no considered for 
+	analysis die to unavailability of data*/
+	VIOLENT_CRIME_RATE=(VIOLENT_CRIME/POPULATION)*100000;
+RUN;
+	
+/*sort the data set by descending order of the calculated crime rate*/	
+PROC SORT DATA=WORK.VC_RATE_CITY_2014 OUT=WORK.VC_RATE_SORTED_2014;
+	BY DESCENDING VIOLENT_CRIME_RATE;
+RUN;
+
+/*print the report */	
+PROC PRINT DATA=WORK.VC_RATE_SORTED_2014 LABEL;
+	FORMAT POPULATION VIOLENT_CRIME MURDER
+			ROBBERY AGGRAVATED_ASSULT COMMA16.
+			VIOLENT_CRIME_RATE COMMA16.3;
+	VAR STATE CITY POPULATION VIOLENT_CRIME MURDER RAPE
+		ROBBERY AGGRAVATED_ASSULT VIOLENT_CRIME_RATE;
+	LABEL VIOLENT_CRIME='Violent Crime' AGGRAVATED_ASSULT='Aggravated Assault'
+		VIOLENT_CRIME_RATE='Violent Crime Rate';
+TITLE1 'US: Californai, Florida, Texas';
+TITLE2 'Violent Crime Details';
+TITLE3 'Year 2014';
+FOOTNOTE '*Crime rate per 100,000';
+RUN;
+
+/*data set for the year 2015*/
+DATA WORK.VC_RATE_CITY_2015;
+	SET WORK.CRIME_DATA;
+	WHERE YEAR=2015 AND 
+	STATE_CODE IN('CA','FL','TX') AND
+	CITY NE 'TYLER';/*Tyler no considered for 
+	analysis die to unavailability of data*/
+	VIOLENT_CRIME_RATE=(VIOLENT_CRIME/POPULATION)*100000;
+RUN;
+
+/*sort the data set in the descending order of ccrim rate*/	
+PROC SORT DATA=WORK.VC_RATE_CITY_2015 OUT=WORK.VC_RATE_SORTED_2015;
+	BY DESCENDING VIOLENT_CRIME_RATE;
+RUN;
+
+/*print the report for the year 2015*/	
+PROC PRINT DATA=WORK.VC_RATE_SORTED_2015 LABEL;
+	FORMAT POPULATION VIOLENT_CRIME MURDER
+			ROBBERY AGGRAVATED_ASSULT COMMA16.
+			VIOLENT_CRIME_RATE COMMA16.3;
+	VAR STATE CITY POPULATION VIOLENT_CRIME MURDER RAPE
+		ROBBERY AGGRAVATED_ASSULT VIOLENT_CRIME_RATE;
+	LABEL AGGRAVATED_ASSULT='Aggravated Assault' VIOLENT_CRIME='Violent Crime'
+		VIOLENT_CRIME_RATE='Violent Crime Rate';
+TITLE1 'US: Californai, Florida, Texas';
+TITLE2 'Violent Crime Details';
+TITLE3 'Year 2015';
+FOOTNOTE '*Crime rate per 100,000';
+RUN;
